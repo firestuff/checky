@@ -6,11 +6,6 @@ import "fmt"
 import "os"
 import "path/filepath"
 
-type Storable interface {
-  GetType() string
-  GetId() string
-}
-
 type Store struct {
   root string
 }
@@ -21,7 +16,7 @@ func NewStore(root string) *Store {
   }
 }
 
-func (s *Store) Write(obj Storable) error {
+func (s *Store) Write(obj Object) error {
   dir := filepath.Join(s.root, obj.GetType())
   filename := hex.EncodeToString([]byte(obj.GetId()))
 
@@ -57,7 +52,7 @@ func (s *Store) Write(obj Storable) error {
   return nil
 }
 
-func (s *Store) Read(obj Storable) error {
+func (s *Store) Read(obj Object) error {
   dir := filepath.Join(s.root, obj.GetType())
   filename := hex.EncodeToString([]byte(obj.GetId()))
 
