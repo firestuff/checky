@@ -5,20 +5,23 @@ import "fmt"
 import "github.com/google/uuid"
 
 func main() {
-  store := NewStore("foo")
+	store := NewStore("foo")
 
-  out := &Template{
-    Id: uuid.NewString(),
-    Test: "round trip",
-  }
+	out := &Template{
+		Id:   uuid.NewString(),
+		Test: "round trip",
+	}
 
-  store.Write(out)
+	store.Write(out)
 
-  in := &Template{
-    Id: out.Id,
-  }
+	in := &Template{
+		Id: out.Id,
+	}
 
-  store.Read(in)
+	store.Read(in)
 
-  fmt.Printf("%+v\n", in)
+	fmt.Printf("%+v\n", in)
+
+	bus := NewBus()
+	bus.Announce(in)
 }
