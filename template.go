@@ -1,8 +1,22 @@
 package main
 
+import "time"
+
 type Template struct {
-	Id   string
-	Test string
+	Id    string  `json:"id"`
+	Items []*Item `json:"items"`
+}
+
+type Item struct {
+	Id string `json:"id"`
+
+	Check *Check `json:"check,omitempty"`
+}
+
+type Check struct {
+	Text      string     `json:"text"`
+	Owner     string     `json:"owner"`
+	Completed *time.Time `json:"completed"`
 }
 
 func (t *Template) GetType() string {
