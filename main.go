@@ -13,6 +13,10 @@ func main() {
 	flag.Parse()
 
 	mux := http.NewServeMux()
+
+	api := NewAPI()
+	mux.Handle("/api/", http.StripPrefix("/api", api))
+
 	srv := &http.Server{
 		Addr:    *bindFlag,
 		Handler: mux,
