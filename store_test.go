@@ -38,7 +38,7 @@ func TestStore(t *testing.T) {
 	}
 
 	if out1.Opaque != "foo" {
-		t.Errorf("Mismatach: %+v", out1)
+		t.Errorf("%+v", out1)
 	}
 
 	out2 := &storeTest{
@@ -51,7 +51,7 @@ func TestStore(t *testing.T) {
 	}
 
 	if out2.Opaque != "bar" {
-		t.Errorf("Mismatach: %+v", out2)
+		t.Errorf("%+v", out2)
 	}
 }
 
