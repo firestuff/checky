@@ -19,10 +19,20 @@ type Check struct {
 	Completed *time.Time `json:"completed"`
 }
 
+func NewTemplate() *Template {
+	return &Template{
+		Items: []*Item{},
+	}
+}
+
 func (t *Template) GetType() string {
 	return "template"
 }
 
 func (t *Template) GetId() string {
 	return t.Id
+}
+
+func (t *Template) IsValid() bool {
+	return true
 }

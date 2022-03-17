@@ -8,13 +8,14 @@ import "log"
 import "net/http"
 
 var bindFlag = flag.String("listen", "[::]:8100", "host:port to listen on")
+var storeFlag = flag.String("store", "data", "data store path")
 
 func main() {
 	flag.Parse()
 
 	mux := http.NewServeMux()
 
-	api := NewAPI()
+	api := NewAPI(*storeFlag)
 	mux.Handle("/api/", http.StripPrefix("/api", api))
 
 	srv := &http.Server{
