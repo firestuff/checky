@@ -21,10 +21,10 @@ func NewAPI(storePath string) *API {
 		bus:    NewBus(),
 	}
 
-	api.router.HandleFunc("/template", jsonOutput(api.createTemplate)).Methods("POST").Headers("Content-Type", "application/json")
+	api.router.HandleFunc("/template", returnError(jsonOutput(api.createTemplate))).Methods("POST").Headers("Content-Type", "application/json")
 	api.router.HandleFunc("/template/{id}", api.streamTemplate).Methods("GET").Headers("Accept", "text/event-stream")
-	api.router.HandleFunc("/template/{id}", jsonOutput(api.getTemplate)).Methods("GET")
-	api.router.HandleFunc("/template/{id}", jsonOutput(api.updateTemplate)).Methods("PATCH").Headers("Content-Type", "application/json")
+	api.router.HandleFunc("/template/{id}", returnError(jsonOutput(api.getTemplate))).Methods("GET")
+	api.router.HandleFunc("/template/{id}", returnError(jsonOutput(api.updateTemplate))).Methods("PATCH").Headers("Content-Type", "application/json")
 
 	return api
 }
@@ -141,18 +141,28 @@ func readJson(r *http.Request, out interface{}) (string, int) {
 	return "", 0
 }
 
-func jsonOutput(wrapped func(*http.Request) (interface{}, string, int)) func(http.ResponseWriter, *http.Request) {
+func returnError(wrapped func(http.ResponseWriter, *http.Request) (string, int)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		out, msg, code := wrapped(r)
+		msg, code := wrapped(w, r)
 		if code != 0 {
 			http.Error(w, msg, code)
-			return
+		}
+	}
+}
+
+func jsonOutput(wrapped func(*http.Request) (interface{}, string, int)) func(http.ResponseWriter, *http.Request) (string, int) {
+	return func(w http.ResponseWriter, r *http.Request) (string, int) {
+		out, msg, code := wrapped(r)
+		if code != 0 {
+			return msg, code
 		}
 
 		enc := json.NewEncoder(w)
 		err := enc.Encode(out)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to encode JSON: %s", err), http.StatusInternalServerError)
+			return fmt.Sprintf("Failed to encode JSON: %s", err), http.StatusInternalServerError
 		}
+
+		return "", 0
 	}
 }
