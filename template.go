@@ -4,6 +4,7 @@ import "time"
 
 type Template struct {
 	Id    string  `json:"id"`
+	Title string  `json:"title"`
 	Items []*Item `json:"items"`
 }
 
