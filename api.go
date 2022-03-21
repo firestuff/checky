@@ -6,20 +6,21 @@ import "log"
 import "net/http"
 import "time"
 
+import "github.com/firestuff/storebus"
 import "github.com/google/uuid"
 import "github.com/gorilla/mux"
 
 type API struct {
 	router *mux.Router
-	store  *Store
-	bus    *Bus
+	store  *storebus.Store
+	bus    *storebus.Bus
 }
 
 func NewAPI(storePath string) *API {
 	api := &API{
 		router: mux.NewRouter(),
-		store:  NewStore(storePath),
-		bus:    NewBus(),
+		store:  storebus.NewStore(storePath),
+		bus:    storebus.NewBus(),
 	}
 
 	api.router.HandleFunc("/template", returnError(jsonOutput(api.createTemplate))).Methods("POST").Headers("Content-Type", "application/json")
@@ -34,7 +35,7 @@ func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	api.router.ServeHTTP(w, r)
 }
 
-func (api *API) createTemplate(r *http.Request) (Object, string, int) {
+func (api *API) createTemplate(r *http.Request) (storebus.Object, string, int) {
 	log.Printf("createTemplate")
 
 	template := NewTemplate()
@@ -100,7 +101,7 @@ func (api *API) streamTemplate(w http.ResponseWriter, r *http.Request) (string, 
 	return "", 0
 }
 
-func (api *API) getTemplate(r *http.Request) (Object, string, int) {
+func (api *API) getTemplate(r *http.Request) (storebus.Object, string, int) {
 	log.Printf("getTemplate %s", mux.Vars(r))
 
 	template := NewTemplate()
@@ -114,7 +115,7 @@ func (api *API) getTemplate(r *http.Request) (Object, string, int) {
 	return template, "", 0
 }
 
-func (api *API) updateTemplate(r *http.Request) (Object, string, int) {
+func (api *API) updateTemplate(r *http.Request) (storebus.Object, string, int) {
 	log.Printf("updateTemplate %s", mux.Vars(r))
 
 	patch := NewTemplate()
@@ -151,7 +152,7 @@ func (api *API) updateTemplate(r *http.Request) (Object, string, int) {
 
 }
 
-func readJson(r *http.Request, out Object) (string, int) {
+func readJson(r *http.Request, out storebus.Object) (string, int) {
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
 
@@ -172,7 +173,7 @@ func returnError(wrapped func(http.ResponseWriter, *http.Request) (string, int))
 	}
 }
 
-func jsonOutput(wrapped func(*http.Request) (Object, string, int)) func(http.ResponseWriter, *http.Request) (string, int) {
+func jsonOutput(wrapped func(*http.Request) (storebus.Object, string, int)) func(http.ResponseWriter, *http.Request) (string, int) {
 	return func(w http.ResponseWriter, r *http.Request) (string, int) {
 		out, msg, code := wrapped(r)
 		if code != 0 {
@@ -189,7 +190,7 @@ func jsonOutput(wrapped func(*http.Request) (Object, string, int)) func(http.Res
 	}
 }
 
-func writeEvent(w http.ResponseWriter, in Object) (string, int) {
+func writeEvent(w http.ResponseWriter, in storebus.Object) (string, int) {
 	data, err := json.Marshal(in)
 	if err != nil {
 		return fmt.Sprintf("Failed to encode JSON: %s", err), http.StatusInternalServerError

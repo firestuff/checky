@@ -1,3 +1,5 @@
+github.com/firestuff/storebus v0.0.0-20220320234918-5e1588edb2eb h1:UWxwtE1DbFqGdw6hAZVtBM1cX5HKvRPygwF2MnhEa1g=
+github.com/firestuff/storebus v0.0.0-20220320234918-5e1588edb2eb/go.mod h1:GfDVrwTVW/pVlgb7Qg3SJ1hXI4aE3SO/IfYz7btihys=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
