@@ -51,18 +51,20 @@ func update(obj storebus.Object, patch storebus.Object) error {
 	switch o := obj.(type) {
 
 	case *Template:
-		p := patch.(*Template)
-
-		if p.Title != "" {
-			o.Title = p.Title
-		}
-
-		return nil
+		return updateTemplate(o, patch.(*Template))
 
 	default:
 		return fmt.Errorf("Unsupported type: %s", obj.GetType())
 
 	}
+}
+
+func updateTemplate(template *Template, patch *Template) error {
+	if patch.Title != "" {
+		template.Title = patch.Title
+	}
+
+	return nil
 }
 
 func mayCreate(obj storebus.Object, r *http.Request) error {
