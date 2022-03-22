@@ -15,7 +15,11 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	api := NewAPI(*storeFlag)
+	api, err := NewAPI(*storeFlag)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	mux.Handle("/api/", http.StripPrefix("/api", api))
 
 	srv := &http.Server{
@@ -25,7 +29,7 @@ func main() {
 
 	log.Printf("listening on %s", *bindFlag)
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}

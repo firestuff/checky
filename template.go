@@ -34,6 +34,10 @@ func (t *Template) GetId() string {
 	return t.Id
 }
 
+func (t *Template) SetId(id string) {
+	t.Id = id
+}
+
 func (t *Template) IsValid() bool {
 	return true
 }
